@@ -29,3 +29,5 @@ def preprocess_data(text):
     result = " ".join(text)
     return result
 
+df["preprocessed_review"] = df["review"].apply(lambda text: preprocess_data(text))
+df['sentiment'] = df["sentiment"].map({"negative": 0, "positive": 1})
