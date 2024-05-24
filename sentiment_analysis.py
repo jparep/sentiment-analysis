@@ -32,3 +32,24 @@ def load_data(filepath):
     df["review"] = df["review"].fillna("missing", inplace=True)
     return df
 
+
+def preprocess_data(texts):
+    """
+    Cleans and preprocesses the text by removing HTML tags, non-alphabetical characters,
+    converting to lowercase, lemmatizing, and removing stopwords.
+
+    Args:
+        text (str): The text to preprocess.
+
+    Returns:
+        str: The preprocessed text.
+    """
+    try:
+        texts = BeautifulSoup(texts, "html.parser").get_text()
+        texts = re.sub(r"[^a-zA-Z]+", " ", texts).lower()
+        texts = [lemmatizer.lemmatize("v") for txt in texts]
+        texts = [lemmatizer.lemmatize() for txt in texts if txt not in stopwords]
+        return " ".join(texts)
+    except Exception as e:
+        print(f"Error processing text {e}")
+        return ""
