@@ -13,12 +13,13 @@ This project applies a Support Vector Machine (SVM) model to classify text data 
 
 ## Installation
 
-To set up the project environment, follow these steps:
+To set up the project environment, follow these steps, To run the script, navigate to the script's directory and run:
 
 ```bash
-git clone https://github.com/yourusername/svm-text-classification-imdb.git
-cd svm-text-classification-imdb
-pip install -r requirements.txt
+git clone https://github.com/jparep/sentiment-analysis.git
+cd sentiment-analysis
+conda env create -f environment.yml
+python sentiment_analysis.py
 ```
 
 ## Usage
@@ -30,14 +31,6 @@ pip install -r requirements.txt
 5. **Training**: Train the SVM model using the vectorized data.
 6. **Evaluation**: Evaluate the model performance on a test dataset.
 7. **Prediction**: Predict sentiment for new, unseen text samples.
-
-### Example Command Line Usage
-
-To run the script, navigate to the script's directory and run:
-
-```bash
-python sentiment_analysis.py
-```
 
 
 ## Project Structure
