@@ -1,0 +1,13 @@
+name: nlpenv
+channels:
+  - defaults
+dependencies:
+  - python=3.10
+  - pandas
+  - bs4
+  - scikit-learn
+  - seaborn
+  - nltk
+  - scikit-learn-intelex
+  - daal4py
+prefix: /home/jparep/anaconda3/envs/nlpenv
