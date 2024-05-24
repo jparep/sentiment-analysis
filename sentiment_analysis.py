@@ -53,3 +53,7 @@ def preprocess_data(texts):
     except Exception as e:
         print(f"Error processing text {e}")
         return ""
+
+if __name__=="__main__":
+    initialize_resource()
+    lemmatizer =WordNetLemmatizer()
