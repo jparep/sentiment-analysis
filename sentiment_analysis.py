@@ -31,3 +31,7 @@ def preprocess_data(text):
 
 df["preprocessed_review"] = df["review"].apply(lambda text: preprocess_data(text))
 df['sentiment'] = df["sentiment"].map({"negative": 0, "positive": 1})
+
+feature = df['preprocessed_review']
+target = df["sentiment"]
+
