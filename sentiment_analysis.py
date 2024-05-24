@@ -27,4 +27,8 @@ def load_data(filepath):
     Returns:
         pandas.DataFrame: The loaded DataFrame with preprocessed 'review' column.
     """
-    
+    df = pd.read_csv(filepath)
+    df["review"] = df["review"].astype(str)
+    df["review"] = df["review"].fillna("missing", inplace=True)
+    return df
+
