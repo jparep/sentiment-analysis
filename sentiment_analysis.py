@@ -103,3 +103,4 @@ def train_and_evaluate(X_train, X_test, y_train, y_test):
 if __name__=="__main__":
     initialize_resource()
     lemmatizer =WordNetLemmatizer()
+    stop_words = set(stopwords.words("English"))
