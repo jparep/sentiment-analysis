@@ -46,17 +46,13 @@ def preprocess_data(text):
     Returns:
         str: The preprocessed text.
     """
-    print("Original text:", text[:100])  # Show the first 100 characters of the original text
     try:
         text = BeautifulSoup(text, "html.parser").get_text()
-        print("After removing HTML:", text[:100])
         text = re.sub(r"[^a-zA-Z]+", " ", text).lower()
-        print("After regex application:", text[:100])
         words = text.split()
         words = [lemmatizer.lemmatize(word, 'v') for word in words]
         words = [lemmatizer.lemmatize(word) for word in words if word not in stop_words]
         processed_text = " ".join(words)
-        print("Processed text:", processed_text[:100])  # Show the first 100 characters of the processed text
         return processed_text
     except Exception as e:
         print(f"Error processing text: {e}")
