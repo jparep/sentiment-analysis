@@ -18,5 +18,5 @@ lem = WordNetLemmatizer()
 stopWords = set(stopwords.words("english"))
 
 data = pd.read_csv('IMDB_dataset.csv')
-print(data)
+print(data.head(5))
 
