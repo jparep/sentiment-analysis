@@ -2,6 +2,7 @@ import pandas as pd
 import re
 from bs4 import BeautifulSoup
 from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
 from sklearn.metrics import classification_report
 from sklearn.feature_extraction.text import CountVectorizer
 from nltk.stem import WordNetLemmatizer
@@ -83,8 +84,21 @@ def vectorize_data(X_train, y_train):
     vectorizer = CountVectorizer()
     return vectorizer.fit_transform(X_train), vectorizer.transform(y_train)
 
+def train_and_evaluate(X_train, X_test, y_train, y_test):
+    """
+    Trains an SVM classifier and evaluates it on the test set.
 
-    
+    Args:
+        X_train, y_train: Training features and labels.
+        X_test, y_test: Test features and labels.
+
+    Returns:
+        str: The classification report.
+    """
+    clf = SVC()
+    clf.fit(X_train, y_train)
+    pred = clf.predict(X_test)
+    return classification_report(y_test, pred)
 
 if __name__=="__main__":
     initialize_resource()
