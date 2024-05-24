@@ -14,9 +14,18 @@ from nltk.corpus import stopwords
 from sklearnex import patch_sklearn 
 patch_sklearn()
 
-lem = WordNetLemmatizer()
-stopWords = set(stopwords.words("english"))
+lemmatizer = WordNetLemmatizer()
+stop_words = set(stopwords.words("english"))
 
-data = pd.read_csv('IMDB_dataset.csv')
-print(data.head(5))
+df = pd.read_csv('IMDB_dataset.csv')
+
+def preprocess_data(text):
+    text = BeautifulSoup(text, "html.parser")
+    text = re.sub(r"[^a-zA-Z]+", " ", text)
+    text = text.lower()
+    text = [lemmatizer.lemmatize(word) for word in text.split(" ")] # Reduce words to their conical and basic form
+    text = [lemmatizer.lemmatize(word, "v") for word in text]
+    text = [word for word in text if not word in stop_words]
+    result = " ".join(text)
+    return result
 
