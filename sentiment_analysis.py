@@ -67,7 +67,23 @@ def prepare_data(df):
     df["processed_reivew"] = df["review"].apply(preprocess_data)
     df['sentiment'] = df["sentiment".map({"negative": 0, "postive": 1})]
     X_train, X_test, y_train, y_test = train_test_split(df["processed_review"], df["sentiment"], test_size=0.2, random_state=121)
-    return X_train, X_test, y_train, y_test    
+    return X_train, X_test, y_train, y_test
+
+def vectorize_data(X_train, y_train):
+    """
+    Vectorizes text features using CountVectorizer.
+
+    Args:
+        X_train (iterable): Training feature set.
+        X_test (iterable): Test feature set.
+
+    Returns:
+        Tuple: Transformed training and test feature sets.
+    """
+    vectorizer = CountVectorizer()
+    return vectorizer.fit_transform(X_train), vectorizer.transform(y_train)
+
+
     
 
 if __name__=="__main__":
