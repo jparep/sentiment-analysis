@@ -15,7 +15,9 @@ def initialize_resource():
     Initializes and downloads necessary NLTK resources and patches scikit-learn with Intel optimizations.
     """
     import nltk
-    nltk.download("stopwords", quiet=True) # Quiet mode suppresses the console output
+    nltk.download("stopwords", quiet=True)  # Download stopwords
+    nltk.download("wordnet", quiet=True)    # Download WordNet for lemmatization
+
 
 def load_data(filepath):
     """
@@ -30,11 +32,10 @@ def load_data(filepath):
     """
     df = pd.read_csv(filepath)
     df["review"] = df["review"].astype(str)
-    df["review"] = df["review"].fillna("missing", inplace=True)
+    df["review"] = df["review"].fillna("missing")
     return df
 
-
-def preprocess_data(texts):
+def preprocess_data(text):
     """
     Cleans and preprocesses the text by removing HTML tags, non-alphabetical characters,
     converting to lowercase, lemmatizing, and removing stopwords.
@@ -45,16 +46,24 @@ def preprocess_data(texts):
     Returns:
         str: The preprocessed text.
     """
+    print("Original text:", text[:100])  # Show the first 100 characters of the original text
     try:
-        texts = BeautifulSoup(texts, "html.parser").get_text()
-        texts = re.sub(r"[^a-zA-Z]+", " ", texts).lower()
-        texts = [lemmatizer.lemmatize("v") for txt in texts]
-        texts = [lemmatizer.lemmatize() for txt in texts if txt not in stopwords]
-        return " ".join(texts)
+        text = BeautifulSoup(text, "html.parser").get_text()
+        print("After removing HTML:", text[:100])
+        text = re.sub(r"[^a-zA-Z]+", " ", text).lower()
+        print("After regex application:", text[:100])
+        words = text.split()
+        words = [lemmatizer.lemmatize(word, 'v') for word in words]
+        words = [lemmatizer.lemmatize(word) for word in words if word not in stop_words]
+        processed_text = " ".join(words)
+        print("Processed text:", processed_text[:100])  # Show the first 100 characters of the processed text
+        return processed_text
     except Exception as e:
-        print(f"Error processing text {e}")
+        print(f"Error processing text: {e}")
         return ""
-    
+
+
+
 def prepare_data(df):
     """
     Prepares data by applying text preprocessing and encoding the sentiment labels.
@@ -65,12 +74,12 @@ def prepare_data(df):
     Returns:
         Tuple: Features and target variables split into training and test sets.
     """
-    df["processed_reivew"] = df["review"].apply(preprocess_data)
-    df['sentiment'] = df["sentiment".map({"negative": 0, "postive": 1})]
+    df["processed_review"] = df["review"].apply(preprocess_data)
+    df['sentiment'] = df["sentiment"].map({"negative": 0, "positive": 1})
     X_train, X_test, y_train, y_test = train_test_split(df["processed_review"], df["sentiment"], test_size=0.2, random_state=121)
     return X_train, X_test, y_train, y_test
 
-def vectorize_data(X_train, y_train):
+def vectorize_data(X_train, X_test):
     """
     Vectorizes text features using CountVectorizer.
 
@@ -81,26 +90,37 @@ def vectorize_data(X_train, y_train):
     Returns:
         Tuple: Transformed training and test feature sets.
     """
-    vectorizer = CountVectorizer()
-    return vectorizer.fit_transform(X_train), vectorizer.transform(y_train)
+    vectorizer = CountVectorizer(min_df=1, max_df=0.95)
+    return vectorizer.fit_transform(X_train), vectorizer.transform(X_test)
 
-def train_and_evaluate(X_train, X_test, y_train, y_test):
+def train_and_evaluate(X_train_vec, X_test_vec, y_train, y_test):
     """
     Trains an SVM classifier and evaluates it on the test set.
 
     Args:
-        X_train, y_train: Training features and labels.
-        X_test, y_test: Test features and labels.
+        X_train_vec, X_test_vec: Vectorized training and test features.
+        y_train, y_test: Training and test labels.
 
     Returns:
         str: The classification report.
     """
     clf = SVC()
-    clf.fit(X_train, y_train)
-    pred = clf.predict(X_test)
-    return classification_report(y_test, pred)
+    clf.fit(X_train_vec, y_train)
+    predictions = clf.predict(X_test_vec)
+    return classification_report(y_test, predictions)
 
-if __name__=="__main__":
+# Main execution logic
+if __name__ == "__main__":
+    # Initialize and define parameters
     initialize_resource()
-    lemmatizer =WordNetLemmatizer()
-    stop_words = set(stopwords.words("English"))
+    lemmatizer = WordNetLemmatizer()
+    stop_words = set(stopwords.words("english"))
+    
+    # Load, prepare and vectorize data
+    df = load_data("IMDB_dataset.csv")
+    X_train, X_test, y_train, y_test = prepare_data(df)
+    X_train_vec, X_test_vec = vectorize_data(X_train, X_test)
+    
+    # Train and evaluate data
+    class_report = train_and_evaluate(X_train_vec, X_test_vec, y_train, y_test)
+    print(class_report)
