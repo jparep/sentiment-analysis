@@ -53,6 +53,22 @@ def preprocess_data(texts):
     except Exception as e:
         print(f"Error processing text {e}")
         return ""
+    
+def prepare_data(df):
+    """
+    Prepares data by applying text preprocessing and encoding the sentiment labels.
+
+    Args:
+        df (pandas.DataFrame): DataFrame containing the 'review' and 'sentiment' columns.
+
+    Returns:
+        Tuple: Features and target variables split into training and test sets.
+    """
+    df["processed_reivew"] = df["review"].apply(preprocess_data)
+    df['sentiment'] = df["sentiment".map({"negative": 0, "postive": 1})]
+    X_train, X_test, y_train, y_test = train_test_split(df["processed_review"], df["sentiment"], test_size=0.2, random_state=121)
+    return X_train, X_test, y_train, y_test    
+    
 
 if __name__=="__main__":
     initialize_resource()
